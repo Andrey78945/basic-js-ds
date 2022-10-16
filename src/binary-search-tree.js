@@ -67,46 +67,52 @@ class BinarySearchTree {
     return temp;
   }
 
+  deleteNode(node, data) {
+    if (node.data === data) {
+      if (node.left === null && node.right === null) {
+        return null;
+      }
+
+      if (node.left === null) {
+        return node.right;
+      }
+
+      if (node.right === null) {
+        return node.left;
+      }
+
+
+      const minNodeInRightSubtree = this.minNode(node.right);
+      node.data = minNodeInRightSubtree.data;
+
+      node.right = this.deleteNode(node.right, minNodeInRightSubtree.data);
+      return node;
+    }
+
+    if (data < node.data) {
+      if (node.left === null) {
+        return node;
+      }
+
+      node.left = this.deleteNode(node.left, data);
+      return node;
+    }
+
+    if (data > node.data) {
+      if (node.right === null) {
+        return node;
+      }
+
+      node.right = this.deleteNode(node.right, data);
+      return node;
+    }
+  }
+
   remove(data) {
     if (this.top === null) {
       return;
     }
-    let temp = this.top;
-    if (temp.data === data) {
-      if (temp.left !== null && temp.right === null) {
-        this.top = this.top.left;
-        return;
-      }
-      if (temp.right !== null && temp.left === null) {
-        this.top = this.top.right;
-        return;
-      }
-       if (temp.right === null && temp.left === null) {
-        this.top = new Node;
-        return;
-      }
-      let newNode = this.top.right;
-      while (newNode.left !== null) {
-        newNode = newNode.left;
-      }
-      newNode.left = temp.left;
-      newNode.right = temp.right;
-    }
-    while (temp.data !== data) {
-      if (temp.data > data) {
-        if (temp.left === null) {
-          return;
-        } else {
-          temp = temp.left;
-        }
-      } else {
-        if (temp.right === null) {
-          return;
-        } else {
-          temp = temp.right;
-        }
-      }
-    }
+    this.top = this.deleteNode(this.top, data);
   }
 
   min() {
@@ -118,6 +124,17 @@ class BinarySearchTree {
       temp = temp.left;
     }
     return temp.data ?? null;
+  }
+
+  minNode(node) {
+    if (node === null) {
+      return null;
+    }
+    let temp = node;
+    while (temp.left !== null) {
+      temp = temp.left;
+    }
+    return temp;
   }
 
   max() {
